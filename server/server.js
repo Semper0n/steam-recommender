@@ -1,6 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose')
 const App = require('./models/app')
+const {log} = require("yarn/lib/cli");
 
 
 const PORT = 3000;
@@ -78,37 +79,99 @@ app.get('/getappslist', (req, res) => {
             }
         })
         .then(data => {
-            let parsedAppsList = JSON.parse(data.toString())
-            parsedAppsList = parsedAppsList.applist.apps
-            let parsedAppsList10 = parsedAppsList.slice(0, 100) // временная фигня
-            console.log('Done writing')
-            res.json(parsedAppsList10)
-            insertAppToDB(parsedAppsList10)
+            // let parsedAppsList = JSON.parse(data.toString())
+            // parsedAppsList = parsedAppsList.applist.apps
+            // let parsedAppsList10 = parsedAppsList.slice(0, 100) // временная фигня
+            // res.json(parsedAppsList10)
+            // insertAppToDB(parsedAppsList10)
+            // console.log('Done writing')
         })
-        // .then(() => {
-        //     App
-        //         .find()
-        //         .then(apps => {
-        //             if (apps) {
-        //
-        //             } else {
-        //                 handleError(res, "No apps")
-        //             }
-        //
-        //
-        //         })
-        //         .catch(error => {
-        //             console.error(error);
-        //         })
-        // })
+        .catch(error => {
+            console.error(error);
+        })
+
+    // Парсинг основных данных о приложениях
+    App
+        .find()
+        .then(apps => {
+            if (apps) {
+                for (let key of apps.slice(0, 1)) {
+                    fetch(`https://store.steampowered.com/api/appdetails?appids=${key.appid}`)
+                        .then(response => {
+                            if (response.ok) {
+                                return response.text();
+                            } else {
+                                throw new Error('HTTP status ' + response.status);
+                            }
+                        })
+                        .then(data => {
+                            let parsedAppInfo = JSON.parse(data.toString())
+                            parsedAppInfo = parsedAppInfo[`${key.appid}`].data
+                            // console.log(parsedAppInfo.platforms.linux)
+                            if (parsedAppInfo.price_overview) {
+                                App.findOneAndUpdate(
+                                    {appid: key.appid},
+                                    {
+                                        is_free: parsedAppInfo.is_free,
+                                        short_description: parsedAppInfo.short_description,
+                                        header_image: parsedAppInfo.header_image,
+                                        developers: parsedAppInfo.developers,
+                                        publishers: parsedAppInfo.publishers,
+                                        price: parsedAppInfo.price_overview.final_formatted,
+                                        platforms: {
+                                            windows: parsedAppInfo.platforms.windows,
+                                            mac: parsedAppInfo.platforms.mac,
+                                            linux: parsedAppInfo.platforms.linux
+                                        },
+                                        categories: parsedAppInfo.categories,
+                                        genres: parsedAppInfo.genres,
+                                        movie: parsedAppInfo.movies[0].webm[480],
+                                        release_date: {
+                                            coming_soon: parsedAppInfo.release_date.coming_soon,
+                                            date: parsedAppInfo.release_date.date
+                                        }
+                                    })
+                                    .exec()
+                                    .then((result) => {
+                                        console.log('Updated with no price')
+                                        res.json(result)
+                                    })
+                            } else {
+                                App.findOneAndUpdate(
+                                    {appid: key.appid},
+                                    {
+                                        is_free: parsedAppInfo.is_free,
+                                        short_description: parsedAppInfo.short_description,
+                                        header_image: parsedAppInfo.header_image,
+                                        developers: parsedAppInfo.developers,
+                                        publishers: parsedAppInfo.publishers,
+                                        platforms: {
+                                            windows: parsedAppInfo.platforms.windows,
+                                            mac: parsedAppInfo.platforms.mac,
+                                            linux: parsedAppInfo.platforms.linux
+                                        },
+                                        categories: parsedAppInfo.categories,
+                                        genres: parsedAppInfo.genres,
+                                        movie: parsedAppInfo.movies[0].webm[480],
+                                        release_date: {
+                                            coming_soon: parsedAppInfo.release_date.coming_soon,
+                                            date: parsedAppInfo.release_date.date
+                                        }
+                                    }, {new: true})
+                                    .exec()
+                                    .then((result) => {
+                                        console.log('Updated with no price')
+                                        res.json(result)
+                                    })
+                            }
+
+                        })
+                }
+            } else {
+                handleError(res, "No apps")
+            }
+        })
 })
-
-
-// .then(data => {
-//     let appsList = JSON.parse(data.toString())
-//     fs.writeFileSync('appsList.json', JSON.stringify(appsList.applist.apps))
-//     console.log('Done writing')
-// })
 
 
 // fetch("https://store.steampowered.com/api/appdetails?appids=976010")
