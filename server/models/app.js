@@ -17,7 +17,11 @@ const appSchema = new Schema({
     header_image: String,
     developers: [String],
     publishers: [String],
-    price: String,
+    price_overview: {
+        discount_percent: Number,
+        initial_formatted: String,
+        final_formatted: String
+    },
     platforms: {
         windows: Boolean,
         mac: Boolean,
