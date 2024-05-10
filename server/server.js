@@ -74,9 +74,10 @@ async function insertAppToDB(list) {
 }
 
 async function insertAppToBlackList(key) {
-        const app = new BlackListApp({appid: key.appid, name: key.name})
-            app.save()
+    const app = new BlackListApp({appid: key.appid, name: key.name})
+    app.save()
 }
+
 
 app.get('/getappslist', (req, res) => {
 
@@ -93,7 +94,7 @@ app.get('/getappslist', (req, res) => {
     //     .then(data => {
     //         let parsedAppsList = JSON.parse(data.toString())
     //         parsedAppsList = parsedAppsList.applist.apps
-    //         let parsedAppsList10 = parsedAppsList //slice(0, 100) // временная фигня
+    //         let parsedAppsList10 = parsedAppsList //slice(0, 10) // временная фигня
     //         res.json(parsedAppsList10)
     //         insertAppToDB(parsedAppsList10)
     //         console.log('Done writing')
@@ -108,130 +109,151 @@ app.get('/getappslist', (req, res) => {
         //.find({is_free: null})
         .then(apps => {
             if (apps) {
-                for (let key of apps.slice(0, 50)) { // .slice(22, 32)
-                    fetch(`https://store.steampowered.com/api/appdetails?appids=${key.appid}`)
-                        .then(response => {
-                            if (response.ok) {
-                                return response.text();
-                            } else {
-                                throw new Error('HTTP status ' + response.status);
-                            }
-                        })
-                        .then(data => {
-                            let parsedAppInfo = JSON.parse(data.toString())
-                            parsedAppInfo = parsedAppInfo[`${key.appid}`].data
-                            console.log(key.appid)
-                            if (parsedAppInfo.release_date.coming_soon || !parsedAppInfo.short_description) {
-                                App.findOneAndDelete({appid: key.appid})
-                                    .then(docs => {
-                                        console.log("Deleted App:", docs.appid);
-                                    })
-                                    .catch(err => {
-                                        console.log(err)
-                                    })}
-                            else if (parsedAppInfo.type !== "game") {
-                                insertAppToBlackList(key)
+                apps = apps.slice(37437, 50000)
+                let index = 37437;
 
-                                App.findOneAndDelete({appid: key.appid})
-                                    .then(docs => {
-                                        console.log("Deleted App and added to blacklist:", docs.appid);
-                                    })
-                                    .catch(err => {
-                                        console.log(err)
-                                    })
-                            }
-                            else if (!parsedAppInfo.is_free) {
-                                // upgradedIDs.push(key.appid)
+                let interval = setInterval(() => {
+                    if (apps.length > 0) {
+                        const key = apps.shift();
+                        fetch(`https://store.steampowered.com/api/appdetails?appids=${key.appid}&l=russian`)
+                            .then(response => {
+                                if (response.ok) {
+                                    return response.text();
+                                } else {
+                                    throw new Error('HTTP status ' + response.status);
+                                }
+                            })
+                            .then(data => {
+                                let parsedAppInfo = JSON.parse(data.toString())
+                                parsedAppInfo = parsedAppInfo[`${key.appid}`].data
+                                console.log(`appid:${key.appid} (iteration: ${index})`)
+                                if (parsedAppInfo.release_date.coming_soon || !parsedAppInfo.short_description) {
+                                    App.findOneAndDelete({appid: key.appid})
+                                        .then(docs => {
+                                            console.log("Deleted App:", docs.appid);
+                                        })
+                                        .catch(err => {
+                                            console.log(err)
+                                        })
+                                } else if (parsedAppInfo.type !== "game") {
+                                    insertAppToBlackList(key)
+
+                                    App.findOneAndDelete({appid: key.appid})
+                                        .then(docs => {
+                                            console.log("Deleted App and added to blacklist:", docs.appid);
+                                        })
+                                        .catch(err => {
+                                            console.log(err)
+                                        })
+                                } else if (!parsedAppInfo.is_free) {
+                                    App.findOneAndUpdate(
+                                        {appid: key.appid},
+                                        {
+                                            is_free: parsedAppInfo.is_free,
+                                            short_description: parsedAppInfo.short_description,
+                                            header_image: parsedAppInfo.header_image,
+                                            developers: parsedAppInfo.developers,
+                                            publishers: parsedAppInfo.publishers,
+                                            price_overview: {
+                                                discount_percent: parsedAppInfo.price_overview.discount_percent,
+                                                initial_formatted: parsedAppInfo.price_overview.initial_formatted,
+                                                final_formatted: parsedAppInfo.price_overview.final_formatted
+                                            },
+                                            platforms: {
+                                                windows: parsedAppInfo.platforms.windows,
+                                                mac: parsedAppInfo.platforms.mac,
+                                                linux: parsedAppInfo.platforms.linux
+                                            },
+                                            categories: parsedAppInfo.categories,
+                                            genres: parsedAppInfo.genres,
+                                            movie: parsedAppInfo.movies[0].webm[480],
+                                            release_date: {
+                                                coming_soon: parsedAppInfo.release_date.coming_soon,
+                                                date: parsedAppInfo.release_date.date
+                                            },
+                                            supported_languages: parsedAppInfo.supported_languages
+                                        })
+                                        .exec()
+                                        .then((result) => {
+                                            console.log(`Updated ${result.appid}`)
+                                        })
+                                } else {
+                                    App.findOneAndUpdate(
+                                        {appid: key.appid},
+                                        {
+                                            is_free: parsedAppInfo.is_free,
+                                            short_description: parsedAppInfo.short_description,
+                                            header_image: parsedAppInfo.header_image,
+                                            developers: parsedAppInfo.developers,
+                                            publishers: parsedAppInfo.publishers,
+                                            platforms: {
+                                                windows: parsedAppInfo.platforms.windows,
+                                                mac: parsedAppInfo.platforms.mac,
+                                                linux: parsedAppInfo.platforms.linux
+                                            },
+                                            categories: parsedAppInfo.categories,
+                                            genres: parsedAppInfo.genres,
+                                            movie: parsedAppInfo.movies[0].webm[480],
+                                            release_date: {
+                                                coming_soon: parsedAppInfo.release_date.coming_soon,
+                                                date: parsedAppInfo.release_date.date
+                                            },
+                                            supported_languages: parsedAppInfo.supported_languages
+                                        }, {new: true})
+                                        .exec()
+                                        .then((result) => {
+                                            console.log(`Updated with no price ${result.appid}`)
+                                        })
+                                }
+
+                            })
+                            .catch(error => {
+                                console.error(error);
+                            })
+
+                        fetch(`https://store.steampowered.com/app/${key.appid}/?l=russian`)
+                            .then(response => {
+                                if (response.ok) {
+                                    return response.text();
+                                } else {
+                                    throw new Error('HTTP status ' + response.status);
+                                }
+                            })
+                            .then(data => {
+                                let tagRegex = new RegExp("class=\"app_tag\" style.*?>([а-яА-ЯёЁa-zA-Z0-9\\s'./_&amp;-]+)</a>"
+                                    , "g");
+                                let matches;
+                                let index = 1
+                                let arr = []
+                                while ((matches = tagRegex.exec(data)) !== null) {
+                                    arr.push({description: matches[1].replace(/\r?\n?\t?/g, "")})
+                                    index++
+                                }
                                 App.findOneAndUpdate(
                                     {appid: key.appid},
-                                    {
-                                        is_free: parsedAppInfo.is_free,
-                                        short_description: parsedAppInfo.short_description,
-                                        header_image: parsedAppInfo.header_image,
-                                        developers: parsedAppInfo.developers,
-                                        publishers: parsedAppInfo.publishers,
-                                        price_overview: {
-                                            discount_percent: parsedAppInfo.price_overview.discount_percent,
-                                            initial_formatted: parsedAppInfo.price_overview.initial_formatted,
-                                            final_formatted: parsedAppInfo.price_overview.final_formatted
-                                        },
-                                        platforms: {
-                                            windows: parsedAppInfo.platforms.windows,
-                                            mac: parsedAppInfo.platforms.mac,
-                                            linux: parsedAppInfo.platforms.linux
-                                        },
-                                        categories: parsedAppInfo.categories,
-                                        genres: parsedAppInfo.genres,
-                                        movie: parsedAppInfo.movies[0].webm[480],
-                                        release_date: {
-                                            coming_soon: parsedAppInfo.release_date.coming_soon,
-                                            date: parsedAppInfo.release_date.date
-                                        }
-                                    })
+                                    {tags: arr},
+                                    {new: true}
+                                )
                                     .exec()
-                                    .then((result) => {
-                                        console.log(`Updated ${result.appid}`)
-                                    })
-                            } else {
-                                // upgradedIDs.push(key.appid)
-                                App.findOneAndUpdate(
-                                    {appid: key.appid},
-                                    {
-                                        is_free: parsedAppInfo.is_free,
-                                        short_description: parsedAppInfo.short_description,
-                                        header_image: parsedAppInfo.header_image,
-                                        developers: parsedAppInfo.developers,
-                                        publishers: parsedAppInfo.publishers,
-                                        platforms: {
-                                            windows: parsedAppInfo.platforms.windows,
-                                            mac: parsedAppInfo.platforms.mac,
-                                            linux: parsedAppInfo.platforms.linux
-                                        },
-                                        categories: parsedAppInfo.categories,
-                                        genres: parsedAppInfo.genres,
-                                        movie: parsedAppInfo.movies[0].webm[480],
-                                        release_date: {
-                                            coming_soon: parsedAppInfo.release_date.coming_soon,
-                                            date: parsedAppInfo.release_date.date
-                                        }
-                                    }, {new: true})
-                                    .exec()
-                                    .then((result) => {
-                                        console.log(`Updated with no price ${result.appid}`)
-                                    })
-                            }
 
-                        })
-                        .catch(error => {
-                        console.error(error);
-                    })
-                }
+                                // console.log(`Добавлены теги: ${arr}`)
+                            })
+                            .catch(error => {
+                                console.error(error);
+                            });
+                        index++
+
+                    } else {
+                        clearInterval(interval)
+                        res.json("Запрос завершён")
+                    }
+                }, 1500)
+
+
             } else {
                 handleError(res, "No apps")
             }
-        }).then(() => {
-            res.json("Запрос завершён")
-    })
+        })
 })
 
-// fetch("https://store.steampowered.com/tag/browse/#global_492")
-//     .then(response => {
-//         if (response.ok) {
-//             return response.text();
-//         } else {
-//             throw new Error('HTTP status ' + response.status);
-//         }
-//     })
-//     .then(data => {
-//         let htmlContent = data
-//         let tagRegex = new RegExp("tagid=\"\\d+\">([a-zA-Z0-9\\s'\\./_&amp;-]+)</div>", "g");
-//         let matches;
-//         while((matches = tagRegex.exec(htmlContent)) !== null)
-//         {
-//             console.log(matches[1]);
-//         }
-//         // console.log(data);
-//     })
-//     .catch(error => {
-//         console.error(error);
-//     });
+

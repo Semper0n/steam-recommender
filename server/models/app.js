@@ -43,9 +43,13 @@ const appSchema = new Schema({
     release_date: {
         coming_soon: Boolean,
         date: String
-    }
-
-
+    },
+    supported_languages: String,
+    tags: [
+        {
+        description: String
+        }
+    ]
 })
 
 const App = mongoose.model('App', appSchema)
