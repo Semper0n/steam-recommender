@@ -1,0 +1,20 @@
+.wrapper {
+    display: flex;
+    background: #162838;
+    margin-top: 4px;
+}
+
+.image-wrapper {
+    width: 100px;
+    height: 47px;
+    margin-right: 8px;
+}
+
+.image {
+    width: 100%;
+}
+
+.info-wrapper {
+    display: flex;
+    flex-direction: column;
+}

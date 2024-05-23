@@ -1,0 +1,28 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    text-decoration: none;
+    color: white;
+    font-family: Inter,fallback-inter,system-ui,sans-serif,"Apple Color Emoji","Segoe UI Emoji",Segoe UI Symbol;
+}
+
+html, body {
+    height: 100%;
+    background: #0c1821;
+}
+
+#root {
+    height: 100%;
+    --footer-height: 142px; /*Исправить*/
+    --page-width: 1400px;
+}
+
+.page {
+    margin: 0 auto;
+    /*background: #122233;*/
+    max-width: var(--page-width);
+    padding: 48px 0 0;
+    min-height: calc(100% - var(--footer-height));
+
+}

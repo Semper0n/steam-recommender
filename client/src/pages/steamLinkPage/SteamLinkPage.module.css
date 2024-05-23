@@ -1,0 +1,74 @@
+.wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 1110px; /*Исправить*/
+    background-image: linear-gradient(to right, transparent 0%, #0e1c28 10%, #122233 50%, #0e1c28 90%, transparent 100%);
+}
+
+.title {
+    padding: 300px 0 10px 0;
+    font-size: 40px;
+    font-weight: normal;
+}
+
+.description {
+    padding: 20px 0;
+    font-size: 20px;
+}
+
+.input-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.input-wrapper {
+    color: gray;
+    border-radius: 25px;
+    font-size: 20px;
+    width: 800px;
+}
+
+.input {
+    width: 100%;
+    padding: 15px;
+    border-radius: inherit;
+    border: 0;
+    font-size: inherit;
+    margin: 30px 0;
+    background: #3b3b44; /*#122233*/
+
+}
+
+.input:focus {
+    border-radius: 25px;
+}
+
+.input-button {
+    font-size: 16px;
+    background: transparent;
+    cursor: pointer;
+    width: 250px;
+    padding: 6px 12px;
+    border: 1px gray solid;
+    border-radius: 6px;
+}
+
+.error {
+    margin-top: 10px;
+    display: none;
+    border: 1px red solid;
+    border-radius: 12px;
+    width: 100%;
+}
+
+.error-title {
+    padding: 10px;
+    background: red;
+    border-radius: 10px 10px 0 0;
+}
+
+.error-text {
+    padding: 10px;
+}

@@ -1,0 +1,24 @@
+.wrapper {
+}
+
+.user-info {
+    display: flex;
+}
+
+.image-wrapper {
+    width: 100px;
+    height: 100px;
+    overflow: hidden;
+}
+
+.image {
+    width: 100%;
+}
+
+.game-count {
+
+}
+
+.nickname {
+
+}

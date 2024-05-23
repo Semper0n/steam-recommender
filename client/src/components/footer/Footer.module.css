@@ -1,0 +1,32 @@
+.footer {
+    width: 100%;
+    padding-top: 32px;
+}
+
+.wrapper {
+    margin: 0 auto;
+    max-width: 1300px;
+    padding: 40px 20px;
+    border-top: 1px solid #394960;
+    display: flex;
+    justify-content: space-between;
+}
+
+.copyright-info {
+    color: gray;
+}
+
+.social {
+    display: flex;
+}
+
+.link {
+    display: flex;
+    margin-right: 16px;
+}
+
+.icon {
+    width: 28px;
+    display: inline-block;
+}
+
