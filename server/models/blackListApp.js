@@ -17,3 +17,5 @@ const blackListAppSchema = new Schema({
 const BlackListApp = mongoose.model('BlackListApp', blackListAppSchema)
 
 module.exports = BlackListApp
+
+
