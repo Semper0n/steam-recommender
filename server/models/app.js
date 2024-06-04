@@ -49,7 +49,14 @@ const appSchema = new Schema({
         {
         description: String
         }
-    ]
+    ],
+    rating: {
+        review_score: Number,
+        review_score_desc: String,
+        total_positive: Number,
+        total_negative: Number,
+        total_reviews: Number
+    }
 })
 
 const App = mongoose.model('App', appSchema)

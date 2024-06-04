@@ -2,15 +2,17 @@ import React from 'react';
 import AppItem from "../appItem/AppItem";
 
 const AppsList = ({userRecomendations}) => {
-
     return (
         <div>
             {userRecomendations.map(app => {
-                return <AppItem name={app.game.name}
-                                date={app.game.release_date.date}
-                                img={app.game.header_image}
-                                key={app.game.appid}
-                                tags={app.game.tags}/>
+                //return <p key={app.appid}>{app.appid}</p>
+                return <AppItem name={app.name}
+                                date={app.release_date.date}
+                                img={app.header_image}
+                                tags={app.tags}
+                                key={app.appid}
+                                appid={app.appid}
+                />
             })}
         </div>
     );

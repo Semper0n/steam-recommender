@@ -1,11 +1,13 @@
 import React from 'react';
 import cl from "./AppItem.module.css"
+import {Link} from "react-router-dom";
 
-const AppItem = ({name, date, tags, img}) => {
+const AppItem = ({name, date, tags, img, appid}) => {
     return (
+        <Link to={`https://store.steampowered.com/app/${appid}`} >
         <article className={cl.wrapper}>
             <div className={cl['picture-wrapper']}>
-                <img src={img} alt={name} className={cl.picture}/>
+                <img src={img} alt='' className={cl.picture}/>
             </div>
             <div className={cl.content}>
                 <div className={cl.text}>
@@ -19,6 +21,7 @@ const AppItem = ({name, date, tags, img}) => {
                 </div>
             </div>
         </article>
+        </Link>
     );
 };
 

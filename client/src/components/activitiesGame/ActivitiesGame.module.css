@@ -4,10 +4,15 @@
     margin-top: 4px;
 }
 
+.wrapper:hover {
+    background: #1c3146;
+}
+
 .image-wrapper {
     width: 100px;
     height: 47px;
     margin-right: 8px;
+    overflow: hidden;
 }
 
 .image {
@@ -17,4 +22,13 @@
 .info-wrapper {
     display: flex;
     flex-direction: column;
+    overflow: hidden;
+}
+
+.name {
+    font-size: 14px;
+}
+
+.time {
+    font-size: 14px;
 }

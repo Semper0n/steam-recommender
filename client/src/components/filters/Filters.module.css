@@ -1,0 +1,15 @@
+.wrapper {
+    width: 100%;
+    /*background: rgba(255, 0, 0, 0.1);*/
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    padding-bottom: 16px;
+    font-size: 14px;
+}
+
+.input-tag-wrapper {
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+}

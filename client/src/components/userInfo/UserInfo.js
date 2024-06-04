@@ -1,19 +1,24 @@
-import cl from "./UserActivities.module.css"
+import cl from "./UserInfo.module.css"
 import UserActivitiesList from "../userActivitiesList/UserActivitiesList";
 import React from "react";
+import {Link} from "react-router-dom";
 
-const UserActivities = ({data}) => {
+const UserInfo = ({data}) => {
     const userInfo = data.userInfo
     const gamesData = data.gamesData
 
     return (
         <div className={cl.wrapper}>
             <div className={cl['user-info']}>
-                <div className={cl['image-wrapper']}>
-                    <img src={userInfo.avatarfull} alt="avatar" className={cl.image}/>
-                </div>
+                <Link to={userInfo.profileurl}>
+                    <div className={cl['image-wrapper']}>
+                        <img src={userInfo.avatarfull} alt="avatar" className={cl.image}/>
+                    </div>
+                </Link>
                 <div className={cl['info-wrapper']}>
-                    <p className={cl.nickname}>{userInfo.personaname}</p>
+                    <Link to={userInfo.profileurl}>
+                        <p className={cl.nickname}>{userInfo.personaname}</p>
+                    </Link>
                     <p className={cl['game-count']}>Количество игр: {gamesData.game_count}</p>
                 </div>
 
@@ -23,4 +28,4 @@ const UserActivities = ({data}) => {
     );
 };
 
-export default UserActivities;
+export default UserInfo;

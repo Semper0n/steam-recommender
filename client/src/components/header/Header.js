@@ -6,11 +6,11 @@ import {Link} from "react-router-dom";
 const Header = () => {
     return (
         <header className={cl.header}>
-            <Link to={"/"}>
-            <div className={cl['logo-wrapper']}>
-                <img className={cl.logo} src={logo} alt={'logo'}/>
+            <div className={cl.content}>
+                <Link to={"/"}>
+                    <img className={cl.logo} src={logo} alt={'logo'}/>
+                </Link>
             </div>
-        </Link>
         </header>
     );
 };

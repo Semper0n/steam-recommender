@@ -10,7 +10,7 @@ const UserActivitiesList = ({gamesData}) => {
     return (
         <div className={cl.wrapper}>
             {gamesData.map((game) => {
-                return <ActivitiesGame name={game.name} img={game.image} playtime={game.playtime_forever} key={game.appid}/>
+                return <ActivitiesGame name={game.name} img={game.image} playtime={game.playtime_forever} key={game.appid} appid={game.appid}/>
             })}
         </div>
     );
