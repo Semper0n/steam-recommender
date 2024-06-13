@@ -6,5 +6,6 @@ router.get('/apps', appsController.getAppsListInDB)
 router.get('/apps/:id', appsController.getAppInDB)
 router.get('/ParseAppsList', appsController.parseAppsList)
 router.get('/ParseAppsData', appsController.parseAppsData)
+//router.get('/getAppsYear', appsController.getAppsYear)
 
 module.exports = router

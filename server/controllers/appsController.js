@@ -58,11 +58,12 @@ class AppsController {
             .find().lean() //.find()
             .then(apps => {
                 if (apps) {
-                    apps = apps.slice(47730)
-                    let index = 47730;
+                    //apps = apps.slice(16140)
+                    let index = 16140;
                     let interval = setInterval(() => {
                         if (apps.length > 0) {
                             const key = apps.shift();
+                            let yearRegex = /\b\d{4}\b/;
                             fetch(`https://store.steampowered.com/api/appdetails?appids=${key.appid}&l=russian`)
                                 .then(response => {
                                     if (response.ok) {
@@ -94,6 +95,7 @@ class AppsController {
                                                 console.log(err)
                                             })
                                     } else {
+                                        let match = parsedAppInfo.release_date?.date.match(yearRegex);
                                         const updateFields = {
                                             is_free: parsedAppInfo.is_free,
                                             short_description: parsedAppInfo.short_description,
@@ -110,7 +112,8 @@ class AppsController {
                                             movie: parsedAppInfo.movies && parsedAppInfo.movies.length > 0 ? parsedAppInfo.movies[0].webm[480] : null,
                                             release_date: {
                                                 coming_soon: parsedAppInfo.release_date?.coming_soon,
-                                                date: parsedAppInfo.release_date?.date
+                                                date: parsedAppInfo.release_date?.date,
+                                                year: match[0]
                                             },
                                             supported_languages: parsedAppInfo.supported_languages
                                         }
@@ -170,7 +173,7 @@ class AppsController {
                                 .catch(error => {
                                     console.error(error);
                                 });
-                            fetch(`https://store.steampowered.com/appreviews/${key.appid}?json=1&language=all&l=russian`)
+                            fetch(`https://store.steampowered.com/appreviews/${key.appid}?json=1&language=all&purchase_type=all&l=russian`)
                                 .then(response => {
                                     if (response.ok) {
                                         return response.text();
@@ -214,6 +217,23 @@ class AppsController {
                 }
             })
     }
+
+    // async getAppsYear(req, res) {
+    //     let allGames = await App.find(
+    //         {"release_date.date": {$exists: true, $ne: ''}}, {appid: 1, _id: 0, release_date: 1}
+    //     ).lean()
+    //     // allGames= allGames.slice(0, 100)
+    //     let yearRegex = /\b\d{4}\b/;
+    //     allGames.forEach(game => {
+    //         let match = game.release_date.date.match(yearRegex);
+    //         if (match) {
+    //             App.findOneAndUpdate({appid: game.appid}, {
+    //                 $set: { "release_date.year": match[0] }
+    //             }).exec()
+    //         }
+    //     })
+    //     res.json(allGames)
+    // }
 }
 
 const handleError = (res, error) => {

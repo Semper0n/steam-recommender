@@ -55,6 +55,14 @@
     border-radius: 6px;
 }
 
+.input-button:hover {
+    background: #162838;
+}
+
+.input-button:active {
+    background: #364b6c;
+}
+
 .error {
     margin-top: 10px;
     display: none;

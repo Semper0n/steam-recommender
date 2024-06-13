@@ -42,7 +42,8 @@ const appSchema = new Schema({
     movie: String,
     release_date: {
         coming_soon: Boolean,
-        date: String
+        date: String,
+        year: Number
     },
     supported_languages: String,
     tags: [

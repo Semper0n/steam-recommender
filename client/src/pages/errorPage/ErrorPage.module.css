@@ -1,0 +1,15 @@
+.wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    padding-top: 60px;
+}
+
+.error-404 {
+    font-size: 56px;
+}
+
+.logo {
+    width: 40px;
+}
